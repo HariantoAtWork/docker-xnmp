@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+  nginx:
+    image: nginx:alpine
+    links:
+      - fpm5-6-23
+      - fpm7-0-8
+    ports:
+      - "7000:80"
+    volumes:
+      - ./nginx/enabled:/etc/nginx/conf.d
+      - ./nginx/snippets:/nginx/snippets
+    volumes_from:
+      - app
+
+  fpm7-0-8:
+    image: php:7.0.8-fpm-alpine
+    volumes_from:
+      - app
+
+  fpm5-6-23:
+    image: php:5.6.23-fpm-alpine
+    volumes_from:
+      - app
+
+  db:
+    image: harianto/mysql
+    volumes:
+      - ./db/storage:/var/lib/mysql
+
+  app:
+    image: alpine:latest
+    command: /bin/sh
+    volumes:
+      - ./vhosts:/vhosts
+
+  dbadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - db
+    ports:
+      - "7070:80"
