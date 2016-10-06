@@ -7,29 +7,29 @@ services:
       - fpm5-6-23
       - fpm7-0-8
     ports:
-      - "7000:80"
+      - "80:80"
     volumes:
       - ./nginx/enabled:/etc/nginx/conf.d
       - ./nginx/snippets:/nginx/snippets
     volumes_from:
-      - app
+      - vhosts
 
   fpm7-0-8:
     image: php:7.0.8-fpm-alpine
     volumes_from:
-      - app
+      - vhosts
 
   fpm5-6-23:
     image: php:5.6.23-fpm-alpine
     volumes_from:
-      - app
+      - vhosts
 
   db:
     image: harianto/mysql
     volumes:
       - ./db/storage:/var/lib/mysql
 
-  app:
+  vhosts:
     image: alpine:latest
     command: /bin/sh
     volumes:
@@ -40,4 +40,4 @@ services:
     links:
       - db
     ports:
-      - "7070:80"
+      - "8080:80"
